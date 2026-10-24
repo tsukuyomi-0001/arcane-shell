@@ -1,154 +1,124 @@
 # Arcane Shell
 
-A sleek, atmospheric desktop shell built for Linux and tuned for Hyprland. Arcane Shell aims to blend fluid UX, immersive visuals, and minimal friction into a modern desktop experience.
+Arcane Shell is a lightweight Quickshell-based desktop shell for Hyprland, designed to feel atmospheric, polished, and minimal. It combines a soft glassmorphism aesthetic with practical desktop controls for a modern, immersive Linux workflow.
 
-> Crafted for the aesthetic-minded, the productive, and the curious.
+> A focused desktop shell prototype for Wayland users who want a cleaner, more expressive top bar and utility layer.
 
-## ✨ Vision
+## ✨ Current Features
 
-Arcane Shell is a custom shell experience designed to feel magical without sacrificing usability. The focus is on:
+- expandable glassy top panel with workspace indicator
+- quick system status controls for Wi‑Fi and Bluetooth
+- wallpaper browser for local image collections
+- power actions menu with shutdown, restart, sleep, hibernate, and logout actions
+- Quickshell IPC triggers for toggling overlay windows
+- rounded, translucent styling with a cyberpunk / arcane visual language
 
-- smooth, modern desktop interactions
-- Hyprland-first workflow
-- elegant wallpaper and UI control
-- compact, highly customizable shell behavior
-- a cyberpunk / arcane aesthetic with clean lines and ambient motion
+## 🧩 Codebase Overview
 
-## 🧩 Project Direction
+The project is currently organized around a few QML files and a shared asset directory:
 
-This project is intended to grow into a fully customized shell for Linux desktops, with a strong emphasis on:
+- `shell.qml` — main shell and panel layout
+- `Wallpaper.qml` — wallpaper picker overlay
+- `PowerMenu.qml` — power actions UI
+- `res/` — icons, SVGs, and wallpaper-related resources
 
-- Hyprland integration
-- Wayland-native behavior
-- tasteful visual polish
-- configurable controls and layouts
-- a living, customizable desktop environment
+The current implementation uses Quickshell, Qt Quick, and QML, with a custom Hyprland-focused panel layout.
 
 ## 🖥️ Requirements
 
-Arcane Shell is designed primarily for:
+Arcane Shell is intended for:
 
 - Arch Linux
 - Hyprland
 - Quickshell
-- Wayland session
+- a Wayland session
 
-You should already have a working Hyprland setup before using this shell.
-
-## ⚙️ Setup on Arch Linux + Hyprland
+## ⚙️ Setup
 
 ### 1) Install Quickshell
 
-On Arch Linux, install Quickshell using your preferred AUR helper:
+On Arch Linux, install Quickshell with your preferred AUR helper:
 
 ```bash
 paru -S quickshell
 ```
 
-If you use another AUR helper, replace `paru` accordingly.
+If you use a different AUR helper, substitute it accordingly.
 
-### 2) Make sure `qs` is available in PATH
-
-After installation, verify the binary is available:
+### 2) Ensure `qs` is in your PATH
 
 ```bash
 qs --help
 ```
 
-If the command is not found, make sure the Quickshell binary is in your PATH or launch it from the installed location.
+If it is not found, make sure the Quickshell binary is available in your PATH or invoke it from its install location.
 
-### 3) Add the wallpaper toggle keybind to Hyprland
+### 3) Add the wallpaper toggle keybind
 
-Edit your Hyprland configuration file and add this binding so the wallpaper picker works correctly:
-
-```lua
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs ipc call wallpaper toggle"))
-```
-
-This is the critical shortcut for toggling the wallpaper picker / wallpaper control from the shell.
-
-Example snippet:
+Add this binding to your Hyprland configuration:
 
 ```lua
--- ~/.config/hypr/hyprland.conf
-$mainMod = SUPER
-
 bind = $mainMod, W, exec, qs ipc call wallpaper toggle
 ```
 
-If your config is using Lua-generated Hyprland config logic, the equivalent form is:
+You can also add a power menu toggle if you want a direct shortcut:
 
 ```lua
-hl.bind(mainMod .. " + W", hl.dsp.exec_cmd("qs ipc call wallpaper toggle"))
+bind = $mainMod, P, exec, qs ipc call power toggle
 ```
 
-## 🚀 Quick Start
+### 4) Prepare your wallpaper directory
 
-1. Clone the repository
-2. Place the shell files into your Quickshell configuration structure
-3. Launch Hyprland
-4. Use the keybind to toggle wallpaper controls and begin customizing the shell
+The current wallpaper picker reads from a local folder:
 
-Example:
-
-```bash
-git clone https://github.com/tsukuyomi-0001/arcane-shell.git
-cd arcane-shell
+```text
+~/Pictures/Wallpaper
 ```
 
-## 🧠 Features Planned
+If your setup differs, update the `folder` path inside `Wallpaper.qml`.
 
-- customizable desktop shell layout
-- animated wallpaper interactions
-- minimal but expressive widgets
-- Hyprland-native hotkeys
-- aesthetic visual style with arcane-inspired theming
-- quick-access controls for media, workspace, and status elements
+### 5) Launch the shell
 
-## 🗂️ Project Structure
+Place the QML files in a Quickshell config location or run the shell from your preferred Quickshell setup, then start Hyprland.
+
+## 📁 Project Structure
 
 ```text
 arcane-shell/
 ├── README.md
-├── config/
-├── shell/
-├── assets/
-├── scripts/
-└── themes/
+├── shell.qml
+├── Wallpaper.qml
+├── PowerMenu.qml
+├── res/
+│   ├── bluetooth.png
+│   ├── wifi.png
+│   ├── power.png
+│   ├── restart.png
+│   ├── sleep.png
+│   ├── hibernate.png
+│   ├── logout.png
+│   ├── workspace.svg
+│   └── ...
+└── other assets as needed
 ```
 
-This structure is subject to evolve as the shell develops.
+## 🎨 Design Direction
 
-## 🎨 Design Language
-
-The goal is to create a shell that feels:
+The project aims to feel:
 
 - immersive
-- polished
-- dynamic
-- calm but energetic
+- calm but expressive
+- minimal but usable
 - futuristic and atmospheric
+- tailored to a modern Hyprland workflow
 
-Think “arcane elegance meets functional desktop utility.”
+This is intentionally a shell prototype rather than a full desktop environment replacement. The focus is on a refined top bar, utility overlays, and an elegant desktop presence.
 
-## 🛠️ Contribution
+## 🛠️ Notes
 
-Contributions are welcome as this project evolves.
+Arcane Shell is still in active development. The interface and behavior may evolve as new widgets, interactions, and Hyprland integrations are added.
 
-If you'd like to contribute:
-
-- improve shell behavior
-- refine visual themes
-- add better Hyprland integration
-- expand wallpaper and panel features
-
-Open an issue or open a pull request.
-
-## 📌 Notes
-
-Arcane Shell is in active development. The visual and behavior direction may evolve as the project matures, but the core goal remains the same:
-
-build a beautiful, usable, immersive shell for Linux users who want their desktop to feel alive.
+The core goal remains the same: build a beautiful, useful shell that feels alive without becoming overwhelming.
 
 ---
 
