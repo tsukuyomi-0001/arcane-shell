@@ -31,7 +31,8 @@ PanelWindow {
             clip: true
 
             anchors.topMargin: 30
-            anchors.leftMargin: 30
+            anchors.leftMargin: 25
+            anchors.rightMargin: 25
             
             contentWidth: grid.width
             contentHeight: grid.height

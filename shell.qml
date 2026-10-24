@@ -14,10 +14,23 @@ ShellRoot {
         source: "Wallpaper.qml"
     }
 
+    Loader {
+        id: power_menu
+        active: false
+        source: "PowerMenu.qml"
+    }
+
     IpcHandler {
         target: "wallpaper"
         function toggle(): void {
             wallpaper.active = !wallpaper.active
+        }
+    }
+
+    IpcHandler {
+        target: "power"
+        function toggle(): void {
+            power_menu.active = !power_menu.active
         }
     }
     
@@ -35,7 +48,12 @@ ShellRoot {
         exclusiveZone: 50
     
         mask: Region {
-            item: island
+            Region {
+                item: island
+            }
+            Region {
+                item: right_anchor
+            }
         }
     
         Rectangle {
@@ -75,10 +93,24 @@ ShellRoot {
             id: island
             anchors.top: parent.top
             anchors.horizontalCenter: parent.horizontalCenter
-            width: 200
-            height: 50
+            width: mouse_area.containsMouse ? 750 : 200
+            height: mouse_area.containsMouse ? 300 : 50
             color: "transparent"
-    
+
+            Behavior on width {
+                NumberAnimation { duration: 180; easing.type: Easing.InOutCubic }
+            }
+
+            Behavior on height {
+                NumberAnimation { duration: 180; easing.type: Easing.InOutCubic }
+            }
+            
+            MouseArea {
+                id: mouse_area
+                anchors.fill: parent
+                hoverEnabled: true
+            }
+            
             Shape {
                 width: parent.width
                 height: parent.height
@@ -120,6 +152,7 @@ ShellRoot {
                 }
     
                 Text {
+                    visible: mouse_area.containsMouse ? false : true
                     anchors.centerIn: parent
                     text: Qt.formatDateTime(clock.date, "hh:mm AP")
                     color: "white"
@@ -139,20 +172,154 @@ ShellRoot {
         }
     
         Rectangle {
+            id: right_anchor
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: 5
             anchors.rightMargin: 10
+            // anchors.
             height: 50
             width: 50 * 3
             radius: 15
             color: "#ee020202"
+
+            PopupWindow {
+                id: wifi_popup
+                anchor.window: root
+                anchor.rect.x: root.width
+                anchor.rect.y: 60
+                // visible: true
+                implicitWidth: 300
+                implicitHeight: 50
+
+                color: "transparent"
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 15
+                    color: "#aa020202"
+
+                    RowLayout {
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 10
+                        implicitHeight: 25
+                        implicitWidth: 25
+                        spacing: 15
+
+                        Image {
+                            source: "./res/wifi.png"
+                            sourceSize.height: 25
+                        }
+                        
+                        Text {
+                            text: "Wi-Fi"
+                            color: "white"
+                            font {
+                                pixelSize: 20
+                                family: "Gothic"
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.rightMargin: 15
+                        anchors.topMargin: 13
+                        width: 50
+                        height: 25
+                        radius: 30
+                        color: "#D6DDEF"
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.leftMargin: 3
+                            height: 20
+                            width: 20
+                            radius: 30
+                            color: "#171719"
+                        }
+                    }
+                }
+            }
+
+            PopupWindow {
+                id: bluetooth_popup
+                anchor.window: root
+                anchor.rect.x: root.width
+                anchor.rect.y: 60
+                visible: false
+                implicitWidth: 300
+                implicitHeight: 50
+
+                color: "transparent"
+
+                Rectangle {
+                    anchors.fill: parent
+                    radius: 15
+                    color: "#aa020202"
+
+                    RowLayout {
+                        anchors.left: parent.left
+                        anchors.top: parent.top
+                        anchors.leftMargin: 20
+                        anchors.topMargin: 10
+                        implicitHeight: 25
+                        implicitWidth: 25
+                        spacing: 15
+
+                        Image {
+                            source: "./res/bluetooth.png"
+                            sourceSize.height: 25
+                        }
+                        
+                        Text {
+                            text: "Bluetooth"
+                            color: "white"
+                            font {
+                                pixelSize: 20
+                                family: "Gothic"
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        anchors.right: parent.right
+                        anchors.top: parent.top
+                        anchors.rightMargin: 15
+                        anchors.topMargin: 13
+                        width: 50
+                        height: 25
+                        radius: 30
+                        color: "#D6DDEF"
+
+                        Rectangle {
+                            anchors.left: parent.left
+                            anchors.verticalCenter: parent.verticalCenter
+                            anchors.leftMargin: 3
+                            height: 20
+                            width: 20
+                            radius: 30
+                            color: "#171719"
+                        }
+                    }
+                }
+            }
 
             RowLayout {
                 anchors.centerIn: parent
                 spacing: 15
 
                 Rectangle {
+                    id: wifi
+
+                    TapHandler {
+                        onTapped: wifi_popup.visible = !wifi_popup.visible 
+                    }
+                    
                     implicitHeight: 25
                     implicitWidth: 25
                     color: "transparent"
@@ -169,6 +336,11 @@ ShellRoot {
                     implicitHeight: 25
                     implicitWidth: 25
                     color: "transparent"
+
+                    TapHandler {
+                        onTapped: bluetooth_popup.visible = !bluetooth_popup.visible 
+                    }
+                    
                     Image {
                         anchors.centerIn: parent
                         source: "./res/bluetooth.png"
@@ -188,6 +360,12 @@ ShellRoot {
                         sourceSize.height: 22
                         height: 22
                         width: 22
+                    }
+
+                    TapHandler {
+                        onTapped: {
+                            Quickshell.execDetached(["qs", "ipc", "call", "power", "toggle"])
+                        }
                     }
                 }
             }
