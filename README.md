@@ -13,13 +13,16 @@ Arcane Shell is a lightweight Quickshell-based desktop shell for Hyprland, desig
 ## Preview
 
 <p align="center">
-  <img src="samples/home.png" width="48%" alt="Arcane Shell home view" />
-  <img src="samples/wallpaper_picker.png" width="48%" alt="Wallpaper picker preview" />
+  <img src="samples/home.png" width="49%" alt="Arcane Shell home view" />
+  <img src="samples/wallpaper_picker.png" width="49%" alt="Wallpaper picker preview" />
 </p>
 
 <p align="center">
-  <img src="samples/power_menu.png" width="48%" alt="Power menu preview" />
-  <img src="samples/wifi.png" width="48%" alt="Wi-Fi panel preview" />
+  <img src="samples/power_menu.png" width="49%" alt="Power menu preview" />
+  <span style="display:inline-block; width:49%; vertical-align:top;">
+    <img src="samples/bluetooth.png" width="100%" alt="Bluetooth preview" />
+    <img src="samples/wifi.png" width="100%" alt="Wi‑Fi preview" />
+  </span>
 </p>
 
 ## ✨ Current Features
@@ -123,7 +126,8 @@ arcane-shell/
 │   ├── wallpaper_picker.png
 │   ├── power_menu.png
 │   ├── wifi.png
-│   └── bluetooth.png
+│   ├── bluetooth.png
+│   └── ...
 └── other assets as needed
 ```
 
