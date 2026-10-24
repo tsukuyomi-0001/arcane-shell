@@ -313,53 +313,58 @@ ShellRoot {
                 anchors.centerIn: parent
                 spacing: 15
 
-                Rectangle {
-                    id: wifi
+                ColumnLayout {
+                    spacing: 10
 
-                    TapHandler {
-                        onTapped: wifi_popup.visible = !wifi_popup.visible 
+                    Rectangle {
+                        id: bluetooth
+                        implicitHeight: 22
+                        implicitWidth: 22
+                        color: "transparent"
+
+                        TapHandler {
+                            onTapped: bluetooth_popup.visible = !bluetooth_popup.visible
+                        }
+
+                        Image {
+                            anchors.centerIn: parent
+                            source: "./res/bluetooth.png"
+                            sourceSize.height: 20
+                            height: 20
+                            width: 20
+                        }
                     }
-                    
-                    implicitHeight: 25
-                    implicitWidth: 25
-                    color: "transparent"
-                    Image {
-                        anchors.centerIn: parent
-                        source: "./res/wifi.png"
-                        sourceSize.height: 25
-                        height: 25
-                        width: 25
+
+                    Rectangle {
+                        id: wifi
+                        implicitHeight: 22
+                        implicitWidth: 22
+                        color: "transparent"
+
+                        TapHandler {
+                            onTapped: wifi_popup.visible = !wifi_popup.visible
+                        }
+
+                        Image {
+                            anchors.centerIn: parent
+                            source: "./res/wifi.png"
+                            sourceSize.height: 20
+                            height: 20
+                            width: 20
+                        }
                     }
                 }
 
                 Rectangle {
-                    implicitHeight: 25
-                    implicitWidth: 25
-                    color: "transparent"
-
-                    TapHandler {
-                        onTapped: bluetooth_popup.visible = !bluetooth_popup.visible 
-                    }
-                    
-                    Image {
-                        anchors.centerIn: parent
-                        source: "./res/bluetooth.png"
-                        sourceSize.height: 22
-                        height: 22
-                        width: 22
-                    }
-                }
-
-                Rectangle {
-                    implicitHeight: 25
-                    implicitWidth: 25
+                    implicitHeight: 22
+                    implicitWidth: 22
                     color: "transparent"
                     Image {
                         anchors.centerIn: parent
                         source: "./res/power.png"
-                        sourceSize.height: 22
-                        height: 22
-                        width: 22
+                        sourceSize.height: 20
+                        height: 20
+                        width: 20
                     }
 
                     TapHandler {
