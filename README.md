@@ -1,8 +1,26 @@
 # Arcane Shell
 
-Arcane Shell is a lightweight Quickshell-based desktop shell for Hyprland, designed to feel atmospheric, polished, and minimal. It combines a soft glassmorphism aesthetic with practical desktop controls for a modern, immersive Linux workflow.
+[![QML](https://img.shields.io/badge/QML-100%25-41CD52?logo=qt&logoColor=white)](https://doc.qt.io/qt-6/qtqml-index.html)
+[![Hyprland](https://img.shields.io/badge/Hyprland-Ready-8B5CF6?logo=linux&logoColor=white)](https://hyprland.org/)
+[![Quickshell](https://img.shields.io/badge/Quickshell-Enabled-0EA5E9?logo=qt&logoColor=white)](https://quickshell.out-of-tree.org/)
+[![Wayland](https://img.shields.io/badge/Wayland-Native-111827?logo=ubuntu&logoColor=white)](https://wayland.freedesktop.org/)
+[![Status](https://img.shields.io/badge/Status-Active%20Development-orange)](https://github.com/tsukuyomi-0001/arcane-shell)
 
-> A focused desktop shell prototype for Wayland users who want a cleaner, more expressive top bar and utility layer.
+Arcane Shell is a lightweight Quickshell-based desktop shell for Hyprland, designed to feel atmospheric, polished, and minimal. It blends glassy UI panels, a cyberpunk-inspired aesthetic, and practical desktop controls into a fluid, modern Linux experience.
+
+> A focused shell prototype for Wayland users who want a cleaner, more expressive top bar and utility layer.
+
+## Preview
+
+<p align="center">
+  <img src="samples/home.png" width="48%" alt="Arcane Shell home view" />
+  <img src="samples/wallpaper_picker.png" width="48%" alt="Wallpaper picker preview" />
+</p>
+
+<p align="center">
+  <img src="samples/power_menu.png" width="48%" alt="Power menu preview" />
+  <img src="samples/wifi.png" width="48%" alt="Wi-Fi panel preview" />
+</p>
 
 ## ✨ Current Features
 
@@ -10,8 +28,8 @@ Arcane Shell is a lightweight Quickshell-based desktop shell for Hyprland, desig
 - quick system status controls for Wi‑Fi and Bluetooth
 - wallpaper browser for local image collections
 - power actions menu with shutdown, restart, sleep, hibernate, and logout actions
-- Quickshell IPC triggers for toggling overlay windows
-- rounded, translucent styling with a cyberpunk / arcane visual language
+- Quickshell IPC toggles for overlay windows
+- rounded, translucent styling with an arcane / cyberpunk visual language
 
 ## 🧩 Codebase Overview
 
@@ -20,9 +38,10 @@ The project is currently organized around a few QML files and a shared asset dir
 - `shell.qml` — main shell and panel layout
 - `Wallpaper.qml` — wallpaper picker overlay
 - `PowerMenu.qml` — power actions UI
-- `res/` — icons, SVGs, and wallpaper-related resources
+- `res/` — icons, SVGs, and other shell resources
+- `samples/` — captured previews of the shell in action
 
-The current implementation uses Quickshell, Qt Quick, and QML, with a custom Hyprland-focused panel layout.
+The current implementation uses Quickshell, Qt Quick, and QML, with a custom Hyprland-focused layout.
 
 ## 🖥️ Requirements
 
@@ -61,7 +80,7 @@ Add this binding to your Hyprland configuration:
 bind = $mainMod, W, exec, qs ipc call wallpaper toggle
 ```
 
-You can also add a power menu toggle if you want a direct shortcut:
+You can also add a power menu toggle:
 
 ```lua
 bind = $mainMod, P, exec, qs ipc call power toggle
@@ -99,6 +118,12 @@ arcane-shell/
 │   ├── logout.png
 │   ├── workspace.svg
 │   └── ...
+├── samples/
+│   ├── home.png
+│   ├── wallpaper_picker.png
+│   ├── power_menu.png
+│   ├── wifi.png
+│   └── bluetooth.png
 └── other assets as needed
 ```
 
