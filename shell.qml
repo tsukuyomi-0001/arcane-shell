@@ -4,33 +4,60 @@ import QtQuick.Shapes
 import Quickshell.Io
 import Quickshell.Hyprland
 import QtQuick.Layouts
-
+import Quickshell.Networking
+import Quickshell.Bluetooth
+import Qt5Compat.GraphicalEffects
+import Quickshell.Widgets
 // import qs.Wallpaper
 
 ShellRoot {
-    Loader {
+    LazyLoader {
         id: wallpaper
-        active: false
+        // active: false
+        activeAsync: false
         source: "Wallpaper.qml"
     }
 
-    Loader {
+    LazyLoader {
         id: power_menu
-        active: false
+        activeAsync: false
         source: "PowerMenu.qml"
     }
 
+    LazyLoader {
+        id: sound_show
+        activeAsync: false
+        source: "Sound.qml"
+    }
+
+    Timer {
+        id: sound_show_timer
+        interval: 5000
+        running: !sound_show.activeAsync ? false : true
+        onTriggered: {
+            sound_show.activeAsync = !sound_show.activeAsync
+        }
+    }
+
+    IpcHandler {
+        target: "sound_show"
+        function keep_active(): void {
+            sound_show.activeAsync = true
+            sound_show_timer.restart()
+        }
+    }
+    
     IpcHandler {
         target: "wallpaper"
         function toggle(): void {
-            wallpaper.active = !wallpaper.active
+            wallpaper.activeAsync = !wallpaper.activeAsync
         }
     }
 
     IpcHandler {
         target: "power"
         function toggle(): void {
-            power_menu.active = !power_menu.active
+            power_menu.activeAsync = !power_menu.activeAsync
         }
     }
     
@@ -116,10 +143,15 @@ ShellRoot {
                 height: parent.height
     
                 ShapePath {
+                    id: shaped_island
                     strokeWidth: 0
-                    fillColor: "#ee020202"
+                    fillColor: mouse_area.containsMouse ? "#aa020202" : "#ee020202" 
                     startX: 0
                     startY: 0
+
+                    Behavior on fillColor {
+                        ColorAnimation { duration: 180; easing.type: Easing.InOutCubic }
+                    }
     
                     PathLine { x: 0; y: 0 }
                     PathArc {
@@ -168,16 +200,162 @@ ShellRoot {
                         // family: "Canterell"
                     }
                 }
+
+                RowLayout {
+                    visible: mouse_area.containsMouse && (island.width === 750) ? true : false
+                    anchors.centerIn: parent
+                    height: parent.height * 0.85
+                    width: parent.width * 0.87
+                    spacing: 20
+
+                    Rectangle {
+                        radius: 15
+                        color: "#55020202"
+                        Layout.fillHeight: true
+                        implicitWidth: parent.width * 0.40
+
+                        Rectangle {
+                            anchors.centerIn: parent
+                            implicitHeight: parent.height * 0.75
+                            implicitWidth: parent.height * 0.75
+                            radius: parent.height * 0.1
+                            color: "#000000"
+
+                            Image {
+                                id: profile_image
+                                visible: false
+                                anchors.fill: parent
+                                fillMode: Image.PreserveAspectCrop
+                                asynchronous: true
+                                cache: true
+                                source: "./res/pfp.png"
+                                sourceSize.height: parent.implicitHeight * 2
+                            }
+    
+    
+                            Rectangle {
+                                id: masked_rect
+                                visible: false
+                                anchors.fill: parent
+                                radius: parent.radius
+                            }
+                            
+                            OpacityMask {
+                                anchors.fill: parent
+                                source: profile_image
+                                maskSource: masked_rect
+                            }
+                        }
+                    }
+
+                    Rectangle {
+                        radius: 15
+                        color: "#55020202"
+                        Layout.fillHeight: true
+                        implicitWidth: parent.width * 0.58
+
+                        ClippingRectangle {
+                            anchors.horizontalCenter: parent.horizontalCenter
+                            anchors.top: parent.top
+                            anchors.topMargin: 30
+                            width: parent.implicitWidth * 0.4
+                            height: parent.implicitWidth * 0.4
+                            radius: parent.implicitWidth
+                            color: "black"
+                            border.color: "white"
+                            border.width: 3
+
+                            Image {
+                                anchors.fill: parent
+                                fillMode: Image.PreserveAspectCrop
+                                source: "./res/no_app_icon.png"
+
+                                transformOrigin: Item.Center
+
+                                NumberAnimation on rotation {
+                                    from: 0
+                                    to: 360
+                                    duration: 13000
+                                    loops: Animation.Infinite
+                                    running: true
+                                    easing.type: Easing.Linear
+                                }
+                            }
+
+                        }
+                        Rectangle {
+                            id: controls
+                            anchors.bottom: parent.bottom
+                            width: parent.width
+                            height: parent.height * 0.3
+                            color: "transparent"
+
+                            ColumnLayout {
+                                anchors.centerIn: parent
+                                spacing: 15
+                                width: parent.width
+
+                                Rectangle {
+                                    Layout.alignment: Qt.AlignHCenter
+                                    implicitWidth: controls.width * 0.8
+                                    implicitHeight: 25
+                                    color: "transparent"
+
+                                    RowLayout {
+                                        height: parent.height
+                                        width: parent.width
+                                        Rectangle {
+                                            color: "white"
+                                            implicitWidth: parent.width * 0.75
+                                            implicitHeight: 5
+                                        }
+
+                                        Rectangle {
+                                            color: "white"
+                                            implicitWidth: parent.width * 0.005
+                                            rotation: 30
+                                            implicitHeight: 25
+                                        }
+
+                                        Rectangle {
+                                            color: "white"
+                                            implicitWidth: parent.width * 0.2
+                                            implicitHeight: 2
+                                        }
+                                    }
+                                }
+                                RowLayout {
+                                    Layout.alignment: Qt.AlignHCenter
+                                    spacing: 30
+                                    Image {
+                                        source: "./res/back.svg"
+                                        sourceSize.height: controls.height * 0.3
+                                    }
+                                    Image {
+                                        source: "./res/start.svg"
+                                        sourceSize.height: controls.height * 0.3
+                                    }
+                                    Image {
+                                        source: "./res/next.svg"
+                                        sourceSize.height: controls.height * 0.3
+                                    }
+                                }
+                            }
+
+                        }
+                    }
+                }
             }
         }
-    
         Rectangle {
             id: right_anchor
+            property bool wifi_enabled: Networking.wifiHardwareEnabled
+            property bool bluetooth_enabled: Bluetooth.defaultAdapter?.enabled ?? false
+            
             anchors.right: parent.right
             anchors.top: parent.top
             anchors.topMargin: 5
             anchors.rightMargin: 10
-            // anchors.
             height: 50
             width: 50 * 3
             radius: 15
@@ -190,7 +368,7 @@ ShellRoot {
                 anchor.rect.y: 60
                 // visible: true
                 implicitWidth: 300
-                implicitHeight: 50
+                implicitHeight: 70
 
                 color: "transparent"
 
@@ -203,7 +381,7 @@ ShellRoot {
                         anchors.left: parent.left
                         anchors.top: parent.top
                         anchors.leftMargin: 20
-                        anchors.topMargin: 10
+                        anchors.topMargin: 20
                         implicitHeight: 25
                         implicitWidth: 25
                         spacing: 15
@@ -227,7 +405,7 @@ ShellRoot {
                         anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.rightMargin: 15
-                        anchors.topMargin: 13
+                        anchors.topMargin: 25
                         width: 50
                         height: 25
                         radius: 30
@@ -253,7 +431,7 @@ ShellRoot {
                 anchor.rect.y: 60
                 visible: false
                 implicitWidth: 300
-                implicitHeight: 50
+                implicitHeight: 70
 
                 color: "transparent"
 
@@ -266,7 +444,7 @@ ShellRoot {
                         anchors.left: parent.left
                         anchors.top: parent.top
                         anchors.leftMargin: 20
-                        anchors.topMargin: 10
+                        anchors.topMargin: 20 
                         implicitHeight: 25
                         implicitWidth: 25
                         spacing: 15
@@ -290,7 +468,7 @@ ShellRoot {
                         anchors.right: parent.right
                         anchors.top: parent.top
                         anchors.rightMargin: 15
-                        anchors.topMargin: 13
+                        anchors.topMargin: 25
                         width: 50
                         height: 25
                         radius: 30
@@ -313,8 +491,24 @@ ShellRoot {
                 anchors.centerIn: parent
                 spacing: 15
 
-                ColumnLayout {
-                    spacing: 10
+                Rectangle {
+                    id: wifi
+
+                    TapHandler {
+                        onTapped: wifi_popup.visible = !wifi_popup.visible 
+                    }
+                    
+                    implicitHeight: 25
+                    implicitWidth: 25
+                    color: "transparent"
+                    Image {
+                        anchors.centerIn: parent
+                        source: right_anchor.wifi_enabled ? "./res/wifi.png" : "./res/no-wifi.png"
+                        sourceSize.height: 25
+                        height: 25
+                        width: 25
+                    }
+                }
 
                     Rectangle {
                         id: bluetooth
@@ -322,36 +516,16 @@ ShellRoot {
                         implicitWidth: 22
                         color: "transparent"
 
-                        TapHandler {
-                            onTapped: bluetooth_popup.visible = !bluetooth_popup.visible
-                        }
-
-                        Image {
-                            anchors.centerIn: parent
-                            source: "./res/bluetooth.png"
-                            sourceSize.height: 20
-                            height: 20
-                            width: 20
-                        }
+                    TapHandler {
+                        onTapped: bluetooth_popup.visible = !bluetooth_popup.visible 
                     }
-
-                    Rectangle {
-                        id: wifi
-                        implicitHeight: 22
-                        implicitWidth: 22
-                        color: "transparent"
-
-                        TapHandler {
-                            onTapped: wifi_popup.visible = !wifi_popup.visible
-                        }
-
-                        Image {
-                            anchors.centerIn: parent
-                            source: "./res/wifi.png"
-                            sourceSize.height: 20
-                            height: 20
-                            width: 20
-                        }
+                    
+                    Image {
+                        anchors.centerIn: parent
+                        source: right_anchor.bluetooth_enabled ? "./res/bluetooth.png" : "./res/no-bluetooth.png" 
+                        sourceSize.height: 22
+                        height: 22
+                        width: 22
                     }
                 }
 

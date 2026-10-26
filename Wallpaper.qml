@@ -1,9 +1,7 @@
-import Quickshell
 import QtQuick
-import QtQuick.Layouts
+import Quickshell
+import Quickshell.Widgets
 import Qt.labs.folderlistmodel
-import QtQuick.Controls
-import Qt5Compat.GraphicalEffects
 
 PanelWindow {
     id: root
@@ -14,7 +12,7 @@ PanelWindow {
     Rectangle {
         id: shell
         anchors.fill: parent
-        color: "#ee0e0e0e"
+        color: "#aa020202"
         radius: 50
 
         FolderListModel {
@@ -26,73 +24,54 @@ PanelWindow {
             sortField: FolderListModel.Name
         }
 
-        Flickable {
-            anchors.fill: parent
+        GridView {
+            id: grid
+            anchors {
+                fill: parent
+                topMargin: 30
+                bottomMargin: 30
+                leftMargin: 25
+                rightMargin: 25
+            }
             clip: true
+            model: imageModel
 
-            anchors.topMargin: 30
-            anchors.leftMargin: 25
-            anchors.rightMargin: 25
-            
-            contentWidth: grid.width
-            contentHeight: grid.height
-            
+            flow: GridView.FlowTopToBottom
             flickableDirection: Flickable.HorizontalFlick
-            
-            GridLayout {
-                id: grid
-                anchors.centerIn: parent
-                columns: imageModel.count / 2 
-                columnSpacing: 20
-                rowSpacing: 20
-    
-                Repeater {
-                    model: imageModel.count
-                    delegate: Item {
-                        required property int index
-    
-                        Layout.fillHeight: true
-                        Layout.fillWidth: true
-                        Layout.minimumHeight: (shell.height / 2) - (10 * 4)
-                        Layout.minimumWidth: (shell.width / 3) - (10 * 3)
-                        clip: true
-    
-                        Rectangle {
-                            id: roundedMask
-                            anchors.fill: parent
-                            radius: 30
-                            visible: false
-                            color: "#121212"   
-                        }
-                        
-                        Image {
-                            id: sourceImage
-                            anchors.fill: parent
-                            source: imageModel.get(index, "fileUrl")
-                            fillMode: Image.PreserveAspectCrop
-                            asynchronous: true
-                            cache: true
-                            sourceSize.height: parent.height
-                            sourceSize.width: parent.width
-                            visible: false
-                        }
-    
-                        OpacityMask {
-                            anchors.fill: parent
-                            source: sourceImage
-                            maskSource: roundedMask
-                        }
-    
-                        MouseArea {
-                            anchors.fill: parent
-                            cursorShape: Qt.PointingHandCursor
-    
-                            onClicked: {
-                                const imagePath = imageModel.get(index, "filePath")
-                                console.log("awww img " + imagePath)
-                                Quickshell.execDetached(["awww", "img", imagePath, "-t", "grow"])
-                                Quickshell.execDetached(["qs", "ipc", "call", "wallpaper", "toggle"])
-                            }
+            boundsBehavior: Flickable.StopAtBounds
+            cellWidth: width / 3 
+            cellHeight: height / 2 
+            cacheBuffer: cellWidth * 2
+
+            delegate: Item {
+                id: cell
+                required property url fileUrl
+                required property string filePath
+
+                width: grid.cellWidth
+                height: grid.cellHeight
+
+                ClippingRectangle {
+                    anchors.fill: parent
+                    anchors.margins: 10
+                    radius: 30
+                    color: "transparent"
+
+                    Image {
+                        anchors.fill: parent
+                        source: cell.fileUrl
+                        fillMode: Image.PreserveAspectCrop
+                        asynchronous: true
+                        sourceSize: Qt.size(640, 400)
+                    }
+
+                    MouseArea {
+                        anchors.fill: parent
+                        cursorShape: Qt.PointingHandCursor
+                        onClicked: {
+                            Quickshell.execDetached(["awww", "img", cell.filePath,
+                                "-t", "grow", "--transition-fps", "180", "--transition-duration", "1"])
+                            Quickshell.execDetached(["qs", "ipc", "call", "wallpaper", "toggle"])
                         }
                     }
                 }

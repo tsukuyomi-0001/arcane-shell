@@ -40,11 +40,11 @@ PanelWindow {
             
             Repeater {
                 model: [
-                    { icon: "./res/power.png", action: "power" },
-                    { icon: "./res/restart.png", action: "restart" },
-                    { icon: "./res/sleep.png", action: "sleep" },
-                    { icon: "./res/hibernate.png", action: "hibernate" },
-                    { icon: "./res/logout.png", action: "logout" }
+                    { icon: "./res/power.png", action: "systemctl poweroff" },
+                    { icon: "./res/restart.png", action: "systemctl reboot" },
+                    { icon: "./res/sleep.png", action: "systemctl suspend" },
+                    { icon: "./res/hibernate.png", action: "systemctl hibernate" },
+                    { icon: "./res/logout.png", action: "hyprctl dispatch exit" }
                 ]
 
                 delegate: Rectangle {
@@ -78,6 +78,8 @@ PanelWindow {
                         anchors.fill: parent
                         hoverEnabled: true
                         cursorShape: Qt.PointingHandCursor
+
+                        onClicked: Quickshell.execDetached(modelData.action.split(" ")) 
 
                         onContainsMouseChanged: {
                             if (mouse_area.containsMouse) {
