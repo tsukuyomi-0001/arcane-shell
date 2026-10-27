@@ -125,11 +125,11 @@ ShellRoot {
             color: "transparent"
 
             Behavior on width {
-                NumberAnimation { duration: 180; easing.type: Easing.InOutCubic }
+                NumberAnimation { duration: 300; easing.type: Easing.InOutSine }
             }
 
             Behavior on height {
-                NumberAnimation { duration: 180; easing.type: Easing.InOutCubic }
+                NumberAnimation { duration: 300; easing.type: Easing.InOutSine }
             }
             
             MouseArea {
