@@ -50,7 +50,7 @@ PanelWindow {
                 Behavior on height {
                     NumberAnimation {
                         duration: 300
-                        easing.type: Easing.Linear
+                        easing.type: Easing.InOutCubic 
                     }
                 }
             }

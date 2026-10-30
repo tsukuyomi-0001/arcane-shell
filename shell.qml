@@ -89,7 +89,7 @@ ShellRoot {
             anchors.topMargin: 5
             anchors.leftMargin: 10
             height: 50
-            width: 90
+            width: 100
             radius: 15
             color: "#ee020202"
     
@@ -350,7 +350,21 @@ ShellRoot {
         Rectangle {
             id: right_anchor
             property bool wifi_enabled: Networking.wifiHardwareEnabled
+            property bool wifi_connected: {
+                for (const device of Networking.devices.values) {
+                    if (device.type === DeviceType.Wifi && device.connected)
+                        return true
+                }
+                return false
+            }
             property bool bluetooth_enabled: Bluetooth.defaultAdapter?.enabled ?? false
+            property bool bluetooth_connected: {
+                for (const device of Bluetooth.devices.values) {
+                    if (device.connected)
+                        return true
+                }
+                return false
+            }
             
             anchors.right: parent.right
             anchors.top: parent.top
@@ -412,9 +426,11 @@ ShellRoot {
                         color: "#D6DDEF"
 
                         Rectangle {
-                            anchors.left: parent.left
+                            anchors.left: right_anchor.wifi_enabled ? false : parent.left
+                            anchors.right: right_anchor.wifi_enabled ? parent.right : false
                             anchors.verticalCenter: parent.verticalCenter
                             anchors.leftMargin: 3
+                            anchors.rightMargin: 3
                             height: 20
                             width: 20
                             radius: 30
@@ -503,42 +519,43 @@ ShellRoot {
                     color: "transparent"
                     Image {
                         anchors.centerIn: parent
-                        source: right_anchor.wifi_enabled ? "./res/wifi.png" : "./res/no-wifi.png"
+                        source: right_anchor.wifi_connected ? "./res/wifi-connected.svg" : right_anchor.wifi_enabled ? "./res/wifi.svg" : "./res/no-wifi.svg"
+                        antialiasing: true
+                        mipmap: true
                         sourceSize.height: 25
                         height: 25
                         width: 25
                     }
                 }
 
-                    Rectangle {
-                        id: bluetooth
-                        implicitHeight: 22
-                        implicitWidth: 22
-                        color: "transparent"
-
+                Rectangle {
+                    id: bluetooth
+                    implicitHeight: 25
+                    implicitWidth: 25
+                    color: "transparent"
                     TapHandler {
                         onTapped: bluetooth_popup.visible = !bluetooth_popup.visible 
                     }
                     
                     Image {
                         anchors.centerIn: parent
-                        source: right_anchor.bluetooth_enabled ? "./res/bluetooth.png" : "./res/no-bluetooth.png" 
-                        sourceSize.height: 22
-                        height: 22
-                        width: 22
+                        source: right_anchor.bluetooth_connected ? "./res/bluetooth-connected.svg" : right_anchor.bluetooth_enabled ? "./res/bluetooth.svg" : "./res/no-bluetooth.svg" 
+                        sourceSize.height: 25
+                        height: 25
+                        width: 25
                     }
                 }
 
                 Rectangle {
-                    implicitHeight: 22
-                    implicitWidth: 22
+                    implicitHeight: 25
+                    implicitWidth: 25
                     color: "transparent"
                     Image {
                         anchors.centerIn: parent
-                        source: "./res/power.png"
-                        sourceSize.height: 20
-                        height: 20
-                        width: 20
+                        source: "./res/power.svg"
+                        sourceSize.height: 25
+                        height: 25
+                        width: 25
                     }
 
                     TapHandler {
